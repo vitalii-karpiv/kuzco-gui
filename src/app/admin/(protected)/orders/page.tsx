@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Plus, RefreshCw, Search, Trash2 } from "lucide-react";
 
 import { orderService } from "@/shared/api/order-service";
@@ -20,6 +21,7 @@ import { CreateOrderModal } from "./_components/create-order-modal";
 type StateFilter = OrderState | "all";
 
 export default function OrdersPage() {
+  const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -196,7 +198,8 @@ export default function OrdersPage() {
                 {filtered.map((order) => (
                   <tr
                     key={order._id}
-                    className="border-b border-paper-line/70 transition-colors last:border-0 hover:bg-paper/50"
+                    onClick={() => router.push(`/admin/orders/${order._id}`)}
+                    className="cursor-pointer border-b border-paper-line/70 transition-colors last:border-0 hover:bg-paper/50"
                   >
                     <td className="px-4 py-3 font-mono text-xs text-ink-soft">
                       {order.code}
@@ -220,7 +223,10 @@ export default function OrdersPage() {
                       <div className="flex justify-end">
                         <button
                           type="button"
-                          onClick={() => setPendingDelete(order)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setPendingDelete(order);
+                          }}
                           aria-label={`Видалити ${order.code}`}
                           className="rounded-lg p-1.5 text-ink-soft transition-colors hover:bg-red-50 hover:text-red-600"
                         >

@@ -4,6 +4,7 @@ import { type ReactNode } from "react";
 import { LogOut } from "lucide-react";
 
 import { AuthGuard, useAuth } from "@/shared/auth/auth-context";
+import { UsersProvider } from "@/shared/users/users-context";
 import { AdminSidebar } from "./_components/admin-sidebar";
 
 function AdminTopbar() {
@@ -41,13 +42,15 @@ export default function ProtectedAdminLayout({
 }) {
   return (
     <AuthGuard fallback={<GuardFallback />}>
-      <div className="flex min-h-dvh">
-        <AdminSidebar />
-        <div className="flex min-w-0 flex-1 flex-col bg-paper text-ink">
-          <AdminTopbar />
-          <div className="flex flex-1 flex-col">{children}</div>
+      <UsersProvider>
+        <div className="flex min-h-dvh">
+          <AdminSidebar />
+          <div className="flex min-w-0 flex-1 flex-col bg-paper text-ink">
+            <AdminTopbar />
+            <div className="flex flex-1 flex-col">{children}</div>
+          </div>
         </div>
-      </div>
+      </UsersProvider>
     </AuthGuard>
   );
 }
