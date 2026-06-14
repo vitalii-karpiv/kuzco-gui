@@ -31,20 +31,30 @@ export default function AdminLogin() {
   }
 
   return (
-    <main className="flex flex-1 items-center justify-center px-6 py-24">
-      <div className="w-full max-w-sm space-y-6 rounded-2xl border border-zinc-200 p-8 dark:border-zinc-800">
-        <div className="space-y-1 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-            Вхід в адмін-панель
-          </h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">Kuzco CRM</p>
+    <main className="flex min-h-dvh flex-1 items-center justify-center bg-graphite px-6 py-24 text-ink-dark">
+      <div className="w-full max-w-sm space-y-8">
+        <div className="flex flex-col items-center space-y-3 text-center">
+          <span className="grid size-12 place-items-center rounded-xl bg-accent font-display text-2xl font-extrabold text-graphite">
+            K
+          </span>
+          <div className="space-y-1">
+            <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink-dark">
+              KUZCO
+            </h1>
+            <p className="font-mono text-[11px] tracking-[0.2em] text-accent">
+              {"// OPS CONSOLE"}
+            </p>
+          </div>
         </div>
 
-        <form className="space-y-4" onSubmit={onSubmit}>
+        <form
+          className="space-y-4 rounded-2xl border border-hairline bg-panel p-8"
+          onSubmit={onSubmit}
+        >
           <div className="space-y-1.5">
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+              className="block font-mono text-[11px] tracking-[0.1em] text-muted-console uppercase"
             >
               Електронна пошта
             </label>
@@ -56,14 +66,14 @@ export default function AdminLogin() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@kuzco.com"
-              className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none placeholder:text-zinc-400 focus:border-zinc-500 dark:border-zinc-700 dark:bg-transparent dark:text-zinc-100"
+              className="w-full rounded-lg border border-hairline bg-graphite px-3 py-2 text-sm text-ink-dark outline-none placeholder:text-muted-console/50 focus:border-accent focus:ring-1 focus:ring-accent"
             />
           </div>
 
           <div className="space-y-1.5">
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+              className="block font-mono text-[11px] tracking-[0.1em] text-muted-console uppercase"
             >
               Пароль
             </label>
@@ -75,12 +85,12 @@ export default function AdminLogin() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none placeholder:text-zinc-400 focus:border-zinc-500 dark:border-zinc-700 dark:bg-transparent dark:text-zinc-100"
+              className="w-full rounded-lg border border-hairline bg-graphite px-3 py-2 text-sm text-ink-dark outline-none placeholder:text-muted-console/50 focus:border-accent focus:ring-1 focus:ring-accent"
             />
           </div>
 
           {error && (
-            <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+            <p className="text-sm text-red-400" role="alert">
               {error}
             </p>
           )}
@@ -88,7 +98,7 @@ export default function AdminLogin() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="w-full rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-graphite transition-all hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {submitting ? "Вхід…" : "Увійти"}
           </button>

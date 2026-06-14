@@ -3,6 +3,23 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* ── Admin "Graphite Console" identity ───────────────────────────── */
+  /* Dark shell (sidebar / topbar) */
+  --gc-graphite: #15171c;
+  --gc-panel: #1c1f26;
+  --gc-hairline: #2a2e37;
+  --gc-ink-dark: #e8e7e3; /* text on graphite */
+  --gc-muted: #8a8f9c; /* secondary text on graphite */
+  /* Work canvas */
+  --gc-paper: #f5f3ee;
+  --gc-ink: #15171c; /* text on paper */
+  --gc-ink-soft: #5b5f68;
+  --gc-paper-line: #e3ded3;
+  /* Accents */
+  --gc-accent: #c6f24e; /* signal lime — active / focus / "powered-on" */
+  --gc-accent-dim: #c6f24e2e; /* lime tint for active row backgrounds */
+  --gc-amber: #ffb627; /* reserved: read-only system banner */
 }
 
 @theme inline {
@@ -10,6 +27,35 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-unbounded);
+
+  /* Graphite Console palette exposed as Tailwind color utilities */
+  --color-graphite: var(--gc-graphite);
+  --color-panel: var(--gc-panel);
+  --color-hairline: var(--gc-hairline);
+  --color-ink-dark: var(--gc-ink-dark);
+  --color-muted-console: var(--gc-muted);
+  --color-paper: var(--gc-paper);
+  --color-ink: var(--gc-ink);
+  --color-ink-soft: var(--gc-ink-soft);
+  --color-paper-line: var(--gc-paper-line);
+  --color-accent: var(--gc-accent);
+  --color-accent-dim: var(--gc-accent-dim);
+  --color-amber: var(--gc-amber);
+
+  /* Staggered nav reveal */
+  --animate-nav-in: nav-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes nav-in {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +68,21 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* Slim console scrollbar inside the dark shell */
+.gc-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gc-hairline) transparent;
+}
+.gc-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.gc-scroll::-webkit-scrollbar-thumb {
+  background: var(--gc-hairline);
+  border-radius: 999px;
+}
+.gc-scroll::-webkit-scrollbar-track {
+  background: transparent;
 }
