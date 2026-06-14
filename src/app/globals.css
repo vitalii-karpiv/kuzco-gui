@@ -17,7 +17,7 @@
   --gc-ink-soft: #5b5f68;
   --gc-paper-line: #e3ded3;
   /* Accents */
-  --gc-accent: #c6f24e; /* signal lime — active / focus / "powered-on" */
+  --gc-accent: #3e5f44; /* signal lime — active / focus / "powered-on" */
   --gc-accent-dim: #c6f24e2e; /* lime tint for active row backgrounds */
   --gc-amber: #ffb627; /* reserved: read-only system banner */
 }
