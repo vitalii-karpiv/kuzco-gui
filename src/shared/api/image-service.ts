@@ -21,4 +21,30 @@ export const imageService = {
   async remove(id: string): Promise<void> {
     await api.delete(`/image/${id}`);
   },
+
+  /** `POST /image/list` by laptop-group. */
+  async listByGroup(groupId: string): Promise<Image[]> {
+    const { data } = await api.post<Image[]>("/image/list", { groupId });
+    return data ?? [];
+  },
+
+  /** `POST /image/upload` — multipart, attached to a laptop-group. */
+  async uploadToGroup(groupId: string, file: File): Promise<void> {
+    const form = new FormData();
+    form.append("image", file);
+    form.append("groupId", groupId);
+    await api.post("/image/upload", form);
+  },
+
+  /** `POST /image/linkGroup` — copy a laptop's photos onto the group. */
+  async linkGroup(
+    laptopId: string,
+    groupId: string,
+  ): Promise<{ count?: number }> {
+    const { data } = await api.post<{ count?: number }>("/image/linkGroup", {
+      laptopId,
+      groupId,
+    });
+    return data ?? {};
+  },
 };
