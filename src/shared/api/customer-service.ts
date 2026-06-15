@@ -8,4 +8,10 @@ export const customerService = {
     const { data } = await api.post<Customer>("/customer", input);
     return data;
   },
+
+  /** `GET /customer/:id`. */
+  async get(id: string): Promise<Customer> {
+    const { data } = await api.get<Customer>(`/customer/${id}`);
+    return data;
+  },
 };
