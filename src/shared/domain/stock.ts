@@ -33,6 +33,19 @@ export const STOCK_TYPE_LABELS: Record<StockType, string> = {
 export const STOCK_STATES = ["free", "booked", "sold"] as const;
 export type StockState = (typeof STOCK_STATES)[number];
 
+export const STOCK_STATE_LABELS: Record<StockState, string> = {
+  free: "Вільний",
+  booked: "Заброньований",
+  sold: "Проданий",
+};
+
+/** Tag colors per state (hex — the shared StateTag tints from these). */
+export const STOCK_STATE_COLORS: Record<StockState, string> = {
+  free: "#16a34a",
+  booked: "#d97706",
+  sold: "#64748b",
+};
+
 export interface Stock {
   _id: string;
   name: string;
