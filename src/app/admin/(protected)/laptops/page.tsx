@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Download, Plus, Trash2 } from "lucide-react";
 
 import { laptopService } from "@/shared/api/laptop-service";
@@ -17,6 +17,15 @@ import {
   type Laptop,
   type LaptopState,
 } from "@/shared/domain/laptop";
+
+/** Parse `?state=` param(s) into a validated LaptopState list. */
+function parseStateParams(searchParams: ReturnType<typeof useSearchParams>): LaptopState[] {
+  const raw = searchParams.getAll("state");
+  const valid = raw.filter((s): s is LaptopState =>
+    LAPTOP_STATES.includes(s as LaptopState),
+  );
+  return valid;
+}
 import { Modal } from "@/shared/ui/modal";
 import {
   LaptopFilterBar,
@@ -44,6 +53,7 @@ function buildFilter(filter: LaptopFilterState, sort: LaptopSort | null) {
 
 export default function LaptopsPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { nameOf } = useUsers();
 
   const [laptops, setLaptops] = useState<Laptop[]>([]);
@@ -51,9 +61,12 @@ export default function LaptopsPage() {
   const [error, setError] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
 
-  const [filter, setFilter] = useState<LaptopFilterState>({
-    stateList: ACTIVE_LAPTOP_STATES,
-    name: "",
+  const [filter, setFilter] = useState<LaptopFilterState>(() => {
+    const fromUrl = parseStateParams(searchParams);
+    return {
+      stateList: fromUrl.length ? fromUrl : ACTIVE_LAPTOP_STATES,
+      name: "",
+    };
   });
   const [sort, setSort] = useState<LaptopSort | null>(null);
 

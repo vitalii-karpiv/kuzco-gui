@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Plus, Trash2 } from "lucide-react";
 
 import { saleService } from "@/shared/api/sale-service";
@@ -11,10 +11,12 @@ import { useUsers } from "@/shared/users/users-context";
 import { formatDate, formatMoney } from "@/shared/format";
 import type { Laptop } from "@/shared/domain/laptop";
 import {
+  SALE_STATES,
   SALE_SOURCE_LABELS,
   SALE_STATE_COLORS,
   SALE_STATE_LABELS,
   type Sale,
+  type SaleState,
 } from "@/shared/domain/sale";
 import { Modal } from "@/shared/ui/modal";
 import { StateTag } from "@/shared/ui/state-tag";
@@ -37,8 +39,15 @@ function buildFilter(filter: SaleFilterState) {
   };
 }
 
+/** Parse `?state=` param(s) into a validated SaleState list. */
+function parseSaleStateParams(searchParams: ReturnType<typeof useSearchParams>): SaleState[] {
+  const raw = searchParams.getAll("state");
+  return raw.filter((s): s is SaleState => SALE_STATES.includes(s as SaleState));
+}
+
 export default function SalesPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { nameOf } = useUsers();
 
   const [sales, setSales] = useState<Sale[]>([]);
@@ -47,11 +56,14 @@ export default function SalesPage() {
   const [error, setError] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
 
-  const [filter, setFilter] = useState<SaleFilterState>({
-    stateList: [],
-    dateFrom: "",
-    dateTo: "",
-    dateSort: -1,
+  const [filter, setFilter] = useState<SaleFilterState>(() => {
+    const fromUrl = parseSaleStateParams(searchParams);
+    return {
+      stateList: fromUrl,
+      dateFrom: "",
+      dateTo: "",
+      dateSort: -1,
+    };
   });
 
   const [createOpen, setCreateOpen] = useState(false);

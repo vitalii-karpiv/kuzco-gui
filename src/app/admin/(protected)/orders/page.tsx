@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Plus, RefreshCw, Search, Trash2 } from "lucide-react";
 
 import { orderService } from "@/shared/api/order-service";
@@ -22,11 +22,18 @@ type StateFilter = OrderState | "all";
 
 export default function OrdersPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const [stateFilter, setStateFilter] = useState<StateFilter>("all");
+  const [stateFilter, setStateFilter] = useState<StateFilter>(() => {
+    const raw = searchParams.get("state") ?? "";
+    return ORDER_STATES.includes(raw as OrderState) ? (raw as OrderState) : "all";
+  });
+  const [counterpartyFilter] = useState<string>(
+    () => searchParams.get("counterparty") ?? "",
+  );
   const [createOpen, setCreateOpen] = useState(false);
   const [pendingDelete, setPendingDelete] = useState<Order | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -68,6 +75,9 @@ export default function OrdersPage() {
     return orders
       .filter((o) => (stateFilter === "all" ? true : o.state === stateFilter))
       .filter((o) =>
+        counterpartyFilter ? o.counterparty === counterpartyFilter : true,
+      )
+      .filter((o) =>
         query
           ? o.name.toLowerCase().includes(query) ||
             o.code.toLowerCase().includes(query)
@@ -79,7 +89,7 @@ export default function OrdersPage() {
           new Date(b.dateOfPurchase).getTime() -
           new Date(a.dateOfPurchase).getTime(),
       );
-  }, [orders, search, stateFilter]);
+  }, [orders, search, stateFilter, counterpartyFilter]);
 
   async function confirmDelete() {
     if (!pendingDelete) return;
