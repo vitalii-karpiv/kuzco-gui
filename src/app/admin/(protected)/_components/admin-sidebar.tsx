@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronsLeft } from "lucide-react";
+
+import { kuzcoService } from "@/shared/api/kuzco-service";
+import type { KuzcoState } from "@/shared/domain/kuzco";
 
 import { NAV_GROUPS } from "./nav-config";
 
@@ -14,6 +17,16 @@ function isActive(pathname: string, href: string): boolean {
 export function AdminSidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const [systemState, setSystemState] = useState<KuzcoState | null>(null);
+
+  useEffect(() => {
+    kuzcoService
+      .getState()
+      .then((kuzco) => setSystemState(kuzco.state))
+      .catch(() => {
+        // silent fail — sidebar is not the right place for error messages
+      });
+  }, []);
 
   // Running index across all groups so the load-in stagger flows top-to-bottom.
   let order = 0;
@@ -82,19 +95,43 @@ export function AdminSidebar() {
         ))}
       </nav>
 
-      {/* System status pill (static placeholder — to be wired to GET /kuzco) */}
+      {/* System status pill — links to /admin/system */}
       <div className="px-3 pb-3">
-        <div className="flex items-center gap-2 rounded-lg border border-hairline bg-panel/60 px-3 py-2">
-          <span className="relative flex size-2 shrink-0">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
-            <span className="relative inline-flex size-2 rounded-full bg-accent" />
-          </span>
-          {!collapsed && (
-            <span className="truncate font-mono text-[10px] tracking-[0.15em] text-muted-console uppercase">
-              Система активна
+        <Link
+          href="/admin/system"
+          title={collapsed ? (systemState === "readonly" ? "Лише читання" : "Система активна") : undefined}
+          className="flex items-center gap-2 rounded-lg border border-hairline bg-panel/60 px-3 py-2 transition-colors hover:bg-panel"
+        >
+          {systemState === null && (
+            <span className="relative flex size-2 shrink-0">
+              <span className="relative inline-flex size-2 rounded-full bg-muted-console/40" />
             </span>
           )}
-        </div>
+          {systemState === "active" && (
+            <span className="relative flex size-2 shrink-0">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
+              <span className="relative inline-flex size-2 rounded-full bg-accent" />
+            </span>
+          )}
+          {systemState === "readonly" && (
+            <span className="relative flex size-2 shrink-0">
+              <span className="relative inline-flex size-2 rounded-full bg-amber-400" />
+            </span>
+          )}
+          {!collapsed && (
+            <span
+              className={`truncate font-mono text-[10px] tracking-[0.15em] uppercase ${
+                systemState === "readonly"
+                  ? "text-amber-400"
+                  : "text-muted-console"
+              }`}
+            >
+              {systemState === null && "…"}
+              {systemState === "active" && "Система активна"}
+              {systemState === "readonly" && "Лише читання"}
+            </span>
+          )}
+        </Link>
       </div>
 
       {/* Collapse toggle */}
