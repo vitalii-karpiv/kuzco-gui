@@ -8,6 +8,7 @@ export interface User {
   name: string;
   surname: string;
   email: string;
+  phone: string;
 }
 
 /** Display name for a user; falls back to an em dash when absent. */

@@ -17,6 +17,8 @@ interface UsersContextValue {
   users: User[];
   /** Resolve a user id to its display name (em dash when unknown). */
   nameOf: (id?: string) => string;
+  /** Re-fetch the staff user list (call after create/update/delete). */
+  refresh: () => void;
 }
 
 const UsersContext = createContext<UsersContextValue | null>(null);
@@ -28,6 +30,7 @@ const UsersContext = createContext<UsersContextValue | null>(null);
  */
 export function UsersProvider({ children }: { children: ReactNode }) {
   const [users, setUsers] = useState<User[]>([]);
+  const [reloadKey, setReloadKey] = useState(0);
 
   // Set state only from the async callback (never synchronously in the effect
   // body) to satisfy react-hooks/set-state-in-effect.
@@ -44,13 +47,14 @@ export function UsersProvider({ children }: { children: ReactNode }) {
     return () => {
       active = false;
     };
-  }, []);
+  }, [reloadKey]);
 
   const value = useMemo<UsersContextValue>(() => {
     const byId = new Map(users.map((user) => [user._id, user]));
     return {
       users,
       nameOf: (id?: string) => (id ? userFullName(byId.get(id)) : "—"),
+      refresh: () => setReloadKey((k) => k + 1),
     };
   }, [users]);
 
@@ -59,5 +63,7 @@ export function UsersProvider({ children }: { children: ReactNode }) {
 
 /** Access the shared staff user list. Returns an empty list outside a provider. */
 export function useUsers(): UsersContextValue {
-  return useContext(UsersContext) ?? { users: [], nameOf: () => "—" };
+  return (
+    useContext(UsersContext) ?? { users: [], nameOf: () => "—", refresh: () => {} }
+  );
 }
