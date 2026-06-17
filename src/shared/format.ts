@@ -36,3 +36,12 @@ export function formatMoney(value?: number | null): string {
   if (value == null || Number.isNaN(value)) return "—";
   return moneyFormatter.format(value);
 }
+
+/**
+ * Expenses are stored server-side as negative integer kopiykas. Convert to a
+ * positive UAH amount for display (e.g. `-50000` -> `500 ₴`).
+ */
+export function formatExpenseAmount(kopiykas?: number | null): string {
+  if (kopiykas == null || Number.isNaN(kopiykas)) return "—";
+  return formatMoney((kopiykas / 100) * -1);
+}
