@@ -21,12 +21,10 @@ import {
 } from "@/shared/domain/laptop";
 import {
   LAPTOP_GROUP_STATE_COLORS,
-  LAPTOP_GROUP_STATE_LABELS,
   type LaptopGroup,
 } from "@/shared/domain/laptop-group";
 import {
   SALE_STATE_COLORS,
-  SALE_STATE_LABELS,
   type Sale,
 } from "@/shared/domain/sale";
 import { CharacteristicsCard } from "./_components/characteristics-card";
@@ -249,13 +247,15 @@ export default function LaptopDetailPage() {
                     </Link>
                     {group ? (
                       <span className="inline-flex items-center gap-1.5">
-                        <StateTag
-                          label={`Група: ${group.title ?? group.groupName ?? group.groupIdentifier ?? ""}`}
-                          color={LAPTOP_GROUP_STATE_COLORS[group.state]}
-                        />
-                        <span className="font-mono text-[10px] text-ink-soft">
-                          {LAPTOP_GROUP_STATE_LABELS[group.state]}
-                        </span>
+                        <Link
+                          href={`/admin/laptop-groups/${group._id}`}
+                          className="transition-opacity hover:opacity-80"
+                        >
+                          <StateTag
+                            label={`Група: ${group.title ?? group.groupName ?? group.groupIdentifier ?? ""}`}
+                            color={LAPTOP_GROUP_STATE_COLORS[group.state]}
+                          />
+                        </Link>
                         <button
                           type="button"
                           onClick={() => void handleRemoveFromGroup()}
@@ -276,15 +276,15 @@ export default function LaptopDetailPage() {
                       </button>
                     )}
                     {sale && (
-                      <span className="inline-flex items-center gap-1.5">
+                      <Link
+                        href={`/admin/sales/${sale._id}`}
+                        className="transition-opacity hover:opacity-80"
+                      >
                         <StateTag
                           label={`Продаж ${sale.code}`}
                           color={SALE_STATE_COLORS[sale.state]}
                         />
-                        <span className="font-mono text-[10px] text-ink-soft">
-                          {SALE_STATE_LABELS[sale.state]}
-                        </span>
-                      </span>
+                      </Link>
                     )}
                   </div>
                 </div>

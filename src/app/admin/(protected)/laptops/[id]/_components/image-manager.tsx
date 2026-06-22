@@ -7,6 +7,7 @@ import { imageService } from "@/shared/api/image-service";
 import { laptopService } from "@/shared/api/laptop-service";
 import { getErrorMessage } from "@/shared/api/error";
 import { cardClass } from "@/shared/ui/form";
+import { ImageLightbox } from "@/shared/ui/image-lightbox";
 import type { Image } from "@/shared/domain/image";
 import type { Laptop } from "@/shared/domain/laptop";
 
@@ -20,6 +21,7 @@ export function ImageManager({ laptop, onChange }: ImageManagerProps) {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [previewIndex, setPreviewIndex] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -134,28 +136,38 @@ export function ImageManager({ laptop, onChange }: ImageManagerProps) {
         <p className="text-sm text-ink-soft">Фото ще не завантажено.</p>
       ) : (
         <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
-          {images.map((image) => {
+          {images.map((image, index) => {
             const isMain = laptop.imageUrl === image.s3Url;
             return (
               <div
                 key={image.id}
                 className="group relative aspect-square overflow-hidden rounded-lg border border-paper-line"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={image.s3Url}
-                  alt=""
-                  className="size-full object-cover"
-                />
+                <button
+                  type="button"
+                  onClick={() => setPreviewIndex(index)}
+                  aria-label="Відкрити фото"
+                  className="size-full cursor-zoom-in"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={image.s3Url}
+                    alt=""
+                    className="size-full object-cover"
+                  />
+                </button>
                 {isMain && (
-                  <span className="absolute top-1 left-1 rounded-full bg-amber p-1 text-white">
+                  <span className="pointer-events-none absolute top-1 left-1 rounded-full bg-amber p-1 text-white">
                     <Star className="size-3" strokeWidth={2.5} fill="currentColor" />
                   </span>
                 )}
                 <div className="absolute inset-x-0 bottom-0 flex justify-between gap-1 bg-graphite/60 p-1 opacity-0 transition-opacity group-hover:opacity-100">
                   <button
                     type="button"
-                    onClick={() => void setMain(image)}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      void setMain(image);
+                    }}
                     disabled={busy || isMain}
                     aria-label="Зробити головним"
                     className="rounded p-1 text-white transition-colors hover:text-amber disabled:opacity-40"
@@ -164,7 +176,10 @@ export function ImageManager({ laptop, onChange }: ImageManagerProps) {
                   </button>
                   <button
                     type="button"
-                    onClick={() => void remove(image)}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      void remove(image);
+                    }}
                     disabled={busy}
                     aria-label="Видалити"
                     className="rounded p-1 text-white transition-colors hover:text-red-400 disabled:opacity-40"
@@ -177,6 +192,13 @@ export function ImageManager({ laptop, onChange }: ImageManagerProps) {
           })}
         </div>
       )}
+
+      <ImageLightbox
+        images={images.map((image) => image.s3Url)}
+        initialIndex={previewIndex ?? 0}
+        open={previewIndex !== null}
+        onClose={() => setPreviewIndex(null)}
+      />
     </section>
   );
 }

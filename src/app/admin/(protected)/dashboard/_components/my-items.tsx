@@ -37,11 +37,11 @@ export function MyItems({ reloadKey }: MyItemsProps) {
 
     Promise.all([
       laptopService.list({
-        assignee: user.id,
+        assignee: user._id,
         stateList: ACTIVE_LAPTOP_STATES,
       }),
       saleService.list({
-        assignee: user.id,
+        assignee: user._id,
         state: ["new", "toApprove", "delivering"],
       }),
     ])
@@ -61,7 +61,7 @@ export function MyItems({ reloadKey }: MyItemsProps) {
     return () => {
       active = false;
     };
-  }, [user.id, reloadKey]);
+  }, [user._id, reloadKey]);
 
   return (
     <section className="space-y-4">
@@ -76,7 +76,7 @@ export function MyItems({ reloadKey }: MyItemsProps) {
           Завантаження…
         </p>
       ) : (
-        <div className="space-y-4">
+        <div className="gc-scroll max-h-96 space-y-4 overflow-y-auto">
           {/* Laptops */}
           <div className="overflow-hidden rounded-2xl border border-paper-line bg-white">
             <div className="border-b border-paper-line px-4 py-2.5">

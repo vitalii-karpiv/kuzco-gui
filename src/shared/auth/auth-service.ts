@@ -2,7 +2,7 @@ import { api } from "@/shared/api/client";
 import { clearToken, setToken } from "@/shared/auth/token";
 
 export interface CurrentUser {
-  id: string;
+  _id: string;
   email: string;
   name: string;
   surname: string;
