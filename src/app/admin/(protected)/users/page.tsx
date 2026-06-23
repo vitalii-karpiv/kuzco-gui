@@ -158,7 +158,7 @@ export default function UsersPage() {
               </thead>
               <tbody>
                 {filtered.map((u) => {
-                  const isSelf = u._id === currentUser.id;
+                  const isSelf = u._id === currentUser._id;
                   return (
                     <tr
                       key={u._id}
